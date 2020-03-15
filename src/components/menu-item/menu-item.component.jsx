@@ -1,8 +1,17 @@
 import React from 'react';
+
+// withRouter is a wrapper that makes us could directly call history, match... in the props
+// without this method, we have to pass the props all the way to the current page
+import { withRouter } from 'react-router-dom';
 import './menu-item.style.scss';
 
-const MenuItem = ({ title, imageUrl, size }) => (
-    <div className={`${size} menu-item`}>
+// we are safe to call history, because we have use the withRouter
+const MenuItem = ({ title, imageUrl, size, history, linkUrl, match }) => (
+    // add the match.url (current url) and the new linkUrl, to get the new url, and then use the history push to navigate to the new link page
+    <div 
+        className={`${size} menu-item`} 
+        onClick={() => history.push(`${match.url}${linkUrl}`)}>
+        
         <div style={{
             backgroundImage: `url(${imageUrl})`
         }}
@@ -15,4 +24,4 @@ const MenuItem = ({ title, imageUrl, size }) => (
     </div>
 );
 
-export default MenuItem;
+export default withRouter(MenuItem);
