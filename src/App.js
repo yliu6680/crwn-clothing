@@ -4,6 +4,7 @@ import { Switch, Route } from 'react-router-dom';
 import './App.css';
 import HomePage from './pages/homepage/homepage.component'
 import ShopPage from './pages/shop/shop.component';
+import Header from './components/header/header.component';
 
 import './pages/homepage/homepage.style.scss'
 
@@ -16,6 +17,9 @@ const HatsPage = () => (
 function App() {
   return (
     <div>
+      {/* header component for the website */}
+      <Header/>
+
       {/* switch: makes only render the first match path */}
       {/* route: makes the app to match the component, the exact will match the exactly same path, if without exact, then mantch all the paths that contain the path in the path parameter */}
       <Switch> 
