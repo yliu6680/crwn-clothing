@@ -8,7 +8,7 @@ import Header from './components/header/header.component';
 import SingInAndSignUpPage from './pages/sign-in-and-sign-up/sign-in-and-sign-up.component';
 
 // we use state in the app.js to indicate the app whether the user is logged in or not
-import { auth } from './firebase/firebase.util';
+import { auth, createUserProfileDocument } from './firebase/firebase.util';
 
 import './pages/homepage/homepage.style.scss'
 
@@ -30,10 +30,27 @@ class App extends React.Component {
   unsubscribeFromAuth = null;
 
   componentDidMount(){
-    this.unsubscribeFromAuth = auth.onAuthStateChanged(user => {
-      this.setState({ currentUser: user });
+    this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
+      // this.setState({ currentUser: user });
+      // if the userAuth is not null
+      if (userAuth) {
+        const userRef = createUserProfileDocument(userAuth);
+        
+        (await userRef).onSnapshot(snapshot => {
+          this.setState({
+            currentUser: {
+              id: snapshot.id,
+              ...snapshot.data()
+            }
+          }, () => {
+            console.log(this.state);
+          });
+        });
+      }
 
-      console.log(user);
+      this.setState({ currentUser: userAuth });
+
+      // console.log(user);
 
     });
   }
