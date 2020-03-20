@@ -1,5 +1,6 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import './App.css';
 import HomePage from './pages/homepage/homepage.component'
@@ -10,6 +11,9 @@ import SingInAndSignUpPage from './pages/sign-in-and-sign-up/sign-in-and-sign-up
 // we use state in the app.js to indicate the app whether the user is logged in or not
 import { auth, createUserProfileDocument } from './firebase/firebase.util';
 
+// user reducer
+import { setCurrentUser } from './redux/user/user.actions';
+
 import './pages/homepage/homepage.style.scss'
 
 const HatsPage = () => (
@@ -19,25 +23,27 @@ const HatsPage = () => (
 )
 
 class App extends React.Component {
-  constructor() {
-    super();
+  // constructor() {
+  //   super();
 
-    this.state = {
-      currentUser: null
-    }
-  }
+  //   this.state = {
+  //     currentUser: null
+  //   }
+  // }
 
   unsubscribeFromAuth = null;
 
   componentDidMount(){
+    const { setCurrentUser } = this.props;
+
     this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
       // this.setState({ currentUser: user });
       // if the userAuth is not null
       if (userAuth) {
-        const userRef = createUserProfileDocument(userAuth);
+        const userRef = await createUserProfileDocument(userAuth);
         
-        (await userRef).onSnapshot(snapshot => {
-          this.setState({
+        userRef.onSnapshot(snapshot => {
+          setCurrentUser({
             currentUser: {
               id: snapshot.id,
               ...snapshot.data()
@@ -48,7 +54,7 @@ class App extends React.Component {
         });
       }
 
-      this.setState({ currentUser: userAuth });
+      setCurrentUser(userAuth);
 
       // console.log(user);
 
@@ -63,7 +69,7 @@ class App extends React.Component {
     return (
       <div>
         {/* header component for the website */}
-        <Header currentUser={this.state.currentUser}/>
+        <Header/>
 
         {/* switch: makes only render the first match path */}
         {/* route: makes the app to match the component, the exact will match the exactly same path, if without exact, then mantch all the paths that contain the path in the path parameter */}
@@ -79,5 +85,9 @@ class App extends React.Component {
   }
 }
 
-export default App;
+const mapDispatchToMaps = dispatch => ({
+  setCurrentUser: user => dispatch(setCurrentUser(user))
+});
+
+export default connect(null, mapDispatchToMaps)(App);
  
