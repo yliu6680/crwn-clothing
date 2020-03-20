@@ -10,6 +10,8 @@ action:
 
 
 */
+import { UserActionTypes } from './user.types';
+
 const INITIAL_STATE = {
     currentUser: null
 }
@@ -18,7 +20,7 @@ const INITIAL_STATE = {
 // we need to consider how to update the state (redux store) in this function based on the action
 const UserReducer = (state = INITIAL_STATE, action) => {
     switch(action.type) {
-        case 'SET_CURRENT_USER':
+        case UserActionTypes.SET_CURRENT_USER:
             return {
                 ...state, 
                 currentUser: action.payload
